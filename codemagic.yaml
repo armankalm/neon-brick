@@ -1,0 +1,48 @@
+workflows:
+  android-debug:
+    name: NeonBricks Debug APK
+    max_build_duration: 60
+    environment:
+      java: 17
+    scripts:
+      - name: Setup Gradle wrapper
+        script: |
+          source "$HOME/.sdkman/bin/sdkman-init.sh" 2>/dev/null || true
+          gradle wrapper --gradle-version 8.2 --distribution-type bin
+          chmod +x gradlew
+      - name: Build debug APK
+        script: ./gradlew assembleDebug
+    artifacts:
+      - app/build/outputs/apk/debug/*.apk
+    publishing:
+      email:
+        recipients:
+          - a.kalmakhambetov@luna8.kz
+        notify:
+          success: true
+          failure: true
+
+  android-release:
+    name: NeonBricks Release APK
+    max_build_duration: 60
+    environment:
+      java: 17
+      android_signing:
+        - keystore_reference
+    scripts:
+      - name: Setup Gradle wrapper
+        script: |
+          source "$HOME/.sdkman/bin/sdkman-init.sh" 2>/dev/null || true
+          gradle wrapper --gradle-version 8.2 --distribution-type bin
+          chmod +x gradlew
+      - name: Build release APK
+        script: ./gradlew assembleRelease
+    artifacts:
+      - app/build/outputs/apk/release/*.apk
+    publishing:
+      email:
+        recipients:
+          - a.kalmakhambetov@luna8.kz
+        notify:
+          success: true
+          failure: true
