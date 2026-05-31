@@ -5,13 +5,17 @@ workflows:
     environment:
       java: 17
     scripts:
-      - name: Setup Gradle wrapper
+      - name: Install Gradle 8.2
         script: |
-          source "$HOME/.sdkman/bin/sdkman-init.sh" 2>/dev/null || true
-          gradle wrapper --gradle-version 8.2 --distribution-type bin
-          chmod +x gradlew
+          source "$HOME/.sdkman/bin/sdkman-init.sh"
+          sdk install gradle 8.2 || true
+          sdk use gradle 8.2
+          gradle --version
       - name: Build debug APK
-        script: ./gradlew assembleDebug
+        script: |
+          source "$HOME/.sdkman/bin/sdkman-init.sh"
+          sdk use gradle 8.2
+          gradle assembleDebug --no-daemon
     artifacts:
       - app/build/outputs/apk/debug/*.apk
     publishing:
@@ -30,13 +34,17 @@ workflows:
       android_signing:
         - keystore_reference
     scripts:
-      - name: Setup Gradle wrapper
+      - name: Install Gradle 8.2
         script: |
-          source "$HOME/.sdkman/bin/sdkman-init.sh" 2>/dev/null || true
-          gradle wrapper --gradle-version 8.2 --distribution-type bin
-          chmod +x gradlew
+          source "$HOME/.sdkman/bin/sdkman-init.sh"
+          sdk install gradle 8.2 || true
+          sdk use gradle 8.2
+          gradle --version
       - name: Build release APK
-        script: ./gradlew assembleRelease
+        script: |
+          source "$HOME/.sdkman/bin/sdkman-init.sh"
+          sdk use gradle 8.2
+          gradle assembleRelease --no-daemon
     artifacts:
       - app/build/outputs/apk/release/*.apk
     publishing:
