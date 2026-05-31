@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.View
 import android.view.WindowInsets
 import android.view.WindowManager
+import android.webkit.RenderProcessGoneDetail
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
@@ -65,7 +66,12 @@ class MainActivity : AppCompatActivity() {
         webView.isHorizontalScrollBarEnabled = false
         webView.overScrollMode = View.OVER_SCROLL_NEVER
 
-        webView.webViewClient = WebViewClient()
+        webView.webViewClient = object : WebViewClient() {
+            @android.annotation.TargetApi(Build.VERSION_CODES.O)
+            override fun onRenderProcessGone(view: WebView, detail: RenderProcessGoneDetail): Boolean {
+                return true
+            }
+        }
 
         // отладка (можно отключить в релизе)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
