@@ -5,30 +5,12 @@ workflows:
     environment:
       java: 17
     scripts:
+      - name: Set Android SDK location
+        script: echo "sdk.dir=$ANDROID_SDK_ROOT" > "$CM_BUILD_DIR/local.properties"
       - name: Build debug APK
         script: gradle assembleDebug --no-daemon
     artifacts:
       - app/build/outputs/apk/debug/*.apk
-    publishing:
-      email:
-        recipients:
-          - a.kalmakhambetov@luna8.kz
-        notify:
-          success: true
-          failure: true
-
-  android-release:
-    name: NeonBricks Release APK
-    max_build_duration: 60
-    environment:
-      java: 17
-      android_signing:
-        - keystore_reference
-    scripts:
-      - name: Build release APK
-        script: gradle assembleRelease --no-daemon
-    artifacts:
-      - app/build/outputs/apk/release/*.apk
     publishing:
       email:
         recipients:
