@@ -5,17 +5,8 @@ workflows:
     environment:
       java: 17
     scripts:
-      - name: Install Gradle 8.2
-        script: |
-          source "$HOME/.sdkman/bin/sdkman-init.sh"
-          sdk install gradle 8.2 || true
-          sdk use gradle 8.2
-          gradle --version
       - name: Build debug APK
-        script: |
-          source "$HOME/.sdkman/bin/sdkman-init.sh"
-          sdk use gradle 8.2
-          gradle assembleDebug --no-daemon
+        script: gradle assembleDebug --no-daemon
     artifacts:
       - app/build/outputs/apk/debug/*.apk
     publishing:
@@ -34,17 +25,8 @@ workflows:
       android_signing:
         - keystore_reference
     scripts:
-      - name: Install Gradle 8.2
-        script: |
-          source "$HOME/.sdkman/bin/sdkman-init.sh"
-          sdk install gradle 8.2 || true
-          sdk use gradle 8.2
-          gradle --version
       - name: Build release APK
-        script: |
-          source "$HOME/.sdkman/bin/sdkman-init.sh"
-          sdk use gradle 8.2
-          gradle assembleRelease --no-daemon
+        script: gradle assembleRelease --no-daemon
     artifacts:
       - app/build/outputs/apk/release/*.apk
     publishing:
