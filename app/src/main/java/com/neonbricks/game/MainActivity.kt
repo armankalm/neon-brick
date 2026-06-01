@@ -6,15 +6,33 @@ import android.os.Bundle
 import android.view.View
 import android.view.WindowInsets
 import android.view.WindowManager
+import android.webkit.JavascriptInterface
 import android.webkit.RenderProcessGoneDetail
+import android.webkit.WebResourceError
+import android.webkit.WebResourceRequest
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.appcompat.app.AppCompatActivity
+import io.sentry.Sentry
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var webView: WebView
+
+    inner class JsErrorBridge {
+        @JavascriptInterface
+        fun reportError(message: String, source: String, line: Int, col: Int, stack: String) {
+            Sentry.captureException(
+                RuntimeException("JS: $message\nat $source:$line:$col\n$stack")
+            )
+        }
+
+        @JavascriptInterface
+        fun reportUnhandledRejection(message: String) {
+            Sentry.captureException(RuntimeException("UnhandledRejection: $message"))
+        }
+    }
 
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -66,10 +84,21 @@ class MainActivity : AppCompatActivity() {
         webView.isHorizontalScrollBarEnabled = false
         webView.overScrollMode = View.OVER_SCROLL_NEVER
 
+        webView.addJavascriptInterface(JsErrorBridge(), "SentryBridge")
+
         webView.webViewClient = object : WebViewClient() {
             @android.annotation.TargetApi(Build.VERSION_CODES.O)
             override fun onRenderProcessGone(view: WebView, detail: RenderProcessGoneDetail): Boolean {
+                Sentry.captureMessage("WebView render process gone (crashed=${detail.didCrash()})")
                 return true
+            }
+
+            @android.annotation.TargetApi(Build.VERSION_CODES.M)
+            override fun onReceivedError(view: WebView, request: WebResourceRequest, error: WebResourceError) {
+                super.onReceivedError(view, request, error)
+                if (request.isForMainFrame) {
+                    Sentry.captureMessage("WebView main frame error: ${error.description} — ${request.url}")
+                }
             }
         }
 

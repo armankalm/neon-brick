@@ -12,6 +12,12 @@
         android:hardwareAccelerated="true"
         android:theme="@style/AppTheme">
 
+        <!-- Sentry: замени YOUR_SENTRY_DSN на реальный DSN из sentry.io -->
+        <meta-data android:name="io.sentry.dsn"
+            android:value="https://039feaa9710df2f7cbf815c94eed7cf3@o4511488359792640.ingest.de.sentry.io/4511488361168976" />
+        <meta-data android:name="io.sentry.traces-sample-rate" android:value="1.0" />
+        <meta-data android:name="io.sentry.environment" android:value="production" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true"

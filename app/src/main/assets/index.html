@@ -2,6 +2,23 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
+<script>
+window.onerror=function(msg,src,line,col,err){
+  if(window.SentryBridge){
+    SentryBridge.reportError(
+      String(msg||''),String(src||''),line||0,col||0,
+      err&&err.stack?String(err.stack):''
+    );
+  }
+  return false;
+};
+window.addEventListener('unhandledrejection',function(e){
+  if(window.SentryBridge){
+    var r=e.reason;
+    SentryBridge.reportUnhandledRejection(r?(r.stack||String(r)):'Unknown rejection');
+  }
+});
+</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#0a0a18">
 <title>NEON BRICKS</title>
