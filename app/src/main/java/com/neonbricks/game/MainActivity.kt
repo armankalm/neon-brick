@@ -38,14 +38,16 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // полноэкранный режим без статус-бара
         window.setFlags(
             WindowManager.LayoutParams.FLAG_FULLSCREEN,
             WindowManager.LayoutParams.FLAG_FULLSCREEN
         )
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
-        // скрываем системные бары
+        webView = WebView(this)
+        setContentView(webView)
+
+        // insetsController требует инициализированного DecorView — только после setContentView
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             window.setDecorFitsSystemWindows(false)
             window.insetsController?.let {
@@ -64,9 +66,6 @@ class MainActivity : AppCompatActivity() {
                 or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
             )
         }
-
-        webView = WebView(this)
-        setContentView(webView)
 
         val s: WebSettings = webView.settings
         s.javaScriptEnabled = true
